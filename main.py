@@ -15,8 +15,9 @@ ENTRY = (
 
 
 def main() -> int:
-    # Self-check gate: entry must be non-blank and 1-200 chars.
+    # Self-check gate: entry must be non-blank, single-line, and 1-200 chars.
     assert ENTRY.strip(), "entry must not be blank"
+    assert "\n" not in ENTRY, "entry must be a single line"
     assert 1 <= len(ENTRY) <= 200, f"entry length {len(ENTRY)} out of range 1-200"
 
     out_dir = os.environ.get("ENTRY_OUTPUT_DIR", "/output")
@@ -25,6 +26,9 @@ def main() -> int:
     with open(out_path, "w", encoding="utf-8") as f:
         f.write(ENTRY + "\n")
 
+    # Verify the write: read it back and confirm it matches exactly.
+    with open(out_path, "r", encoding="utf-8") as f:
+        assert f.read() == ENTRY + "\n", "written entry does not match ENTRY"
     print(ENTRY)
     print(f"chars: {len(ENTRY)}")
     print(f"wrote: {out_path}")
